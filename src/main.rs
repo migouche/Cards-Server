@@ -1,14 +1,11 @@
 mod server;
 mod game;
 
-use core::str;
-use std::sync::{Arc};
+use std::sync::Arc;
 use tokio::sync::Mutex;
 
 use server::handle_connection;
 use tokio::net::{TcpListener, TcpStream};
-use tokio_tungstenite::accept_async;
-use futures::{SinkExt, StreamExt};
 use clap::Parser;
 use game::GameState;
 

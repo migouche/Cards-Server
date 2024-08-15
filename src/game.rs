@@ -1,3 +1,5 @@
+use std::{collections::{hash_map::Entry, HashMap}, net::SocketAddr};
+
 #[derive(Debug)]
 struct Card
 {
@@ -16,11 +18,18 @@ impl Player {
     {
         Player 
         {
-            name: "a".to_string(),
+            name: name.to_string(),
             hand: Vec::new()
         }
     }
+
+    pub fn get_name(&self) -> &str
+    {
+        &self.name
+    }
 }
+
+
 
 
 struct GameData
@@ -31,7 +40,7 @@ struct GameData
 
 pub struct GameState
 {
-    pub players: Vec<Player>,
+    pub players: HashMap<SocketAddr, Player>
 }
 
 impl GameState {
@@ -39,7 +48,28 @@ impl GameState {
     {
         GameState
         {
-            players: Vec::new()
+            players: HashMap::new()
+        }
+    }
+
+    pub fn get_player(&self, ip: &SocketAddr) -> Option<&Player> {
+        self.players.get(ip)
+    }
+
+    pub fn get_player_mut(&mut self, ip: &SocketAddr) -> Option<&mut Player> {
+        self.players.get_mut(ip)
+    }
+
+    pub fn remove_player(&mut self, ip: &SocketAddr) -> Option<Player> {
+        self.players.remove(ip)
+    }
+
+    pub fn add_player(&mut self, name: &str, ip: SocketAddr) -> Option<&mut Player>
+    {
+        match self.players.entry(ip)
+        {
+            Entry::Vacant(v) => Some(v.insert(Player::new(&name))),
+            Entry::Occupied(_) => None
         }
     }
 }
